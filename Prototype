@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Prototype
+{
+    public abstract class ProductPrototype
+    {
+        decimal _price;
+
+        public decimal Price
+        {
+            get { return _price; }
+            set { _price = value; }
+        }
+
+        public ProductPrototype(decimal price)
+        {
+            this._price = price;
+        }
+
+        public ProductPrototype Clone()
+        {
+            return (ProductPrototype)this.MemberwiseClone();
+        }
+    }
+
+
+    public class Bread : ProductPrototype
+    {
+        public Bread(decimal price) : base(price) { }
+    }
+
+
+    public class Butter : ProductPrototype
+    {
+        public Butter(decimal price) : base(price) { }
+    }
+
+
+        public class Supermarket
+        {
+            private Dictionary<string, ProductPrototype> _productList = new Dictionary<string, ProductPrototype>();
+
+            public void AddProduct(string key, ProductPrototype productPrototype)
+            {
+                _productList.Add(key, productPrototype);
+            }
+
+            public ProductPrototype GetClonedProduct(string key)
+            {
+                return _productList[key].Clone();
+            }
+        }
+
+
+        class MainClass
+        {
+            public static void Main(string[] args)
+            {
+            Console.OutputEncoding = Encoding.UTF8;
+            var supermarket = new Supermarket();
+            ProductPrototype product;
+            decimal basePrice;
+
+            supermarket.AddProduct("Bread", new Bread(9.50m));
+            supermarket.AddProduct("Butter", new Butter(5.30m));
+
+            // pierwszy chleb
+            product = supermarket.GetClonedProduct("Bread");
+            basePrice = product.Price;
+            product.Price = Math.Round(0.9m * basePrice, 2);
+            Console.WriteLine(String.Format("Bread - {0} zł -> {1} zł", basePrice, product.Price));
+
+            // drugi
+            product = supermarket.GetClonedProduct("Bread");
+            Console.WriteLine(String.Format("Bread - {0} zł", product.Price));
+
+            // masło
+            product = supermarket.GetClonedProduct("Butter");
+            Console.WriteLine(String.Format("Butter - {0} zł", product.Price));
+
+            Console.ReadKey();
+            }
+        }
+    }
