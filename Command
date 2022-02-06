@@ -1,0 +1,96 @@
+using System;
+using System.Text;
+ 
+public interface IPolecenie{
+    /* UZUPEŁNIĆ */
+    void wykonaj(); 
+}
+ 
+public class KomendaWlacz : IPolecenie {
+  Lampa lampa;
+  public KomendaWlacz(Lampa lampa) {
+    /* UZUPEŁNIĆ */
+    this.lampa = lampa;
+  }
+  public void wykonaj() {
+    lampa.wlacz();
+  }
+}
+ 
+public class KomendaWylacz : IPolecenie {
+  /* UZUPEŁNIĆ */
+  Lampa lampa;
+  public KomendaWylacz(Lampa lampa) {
+    /* UZUPEŁNIĆ */
+     this.lampa = lampa;
+  }
+  public void wykonaj() {
+    lampa.wlacz();
+  }
+}
+ 
+ 
+public class Lampa{
+  /* UZUPEŁNIĆ */
+  bool stan;
+  public Lampa(){
+    this.stan = false;
+  }
+ 
+  /* UZUPEŁNIĆ */
+  public void wlacz(){
+    if (stan == true)
+      stan = false;
+    else
+      stan = true;
+  }
+ 
+  public bool sprawdz(){
+    return stan;
+  }
+}
+ 
+public class Pilot{
+  private IPolecenie polecenie;
+ 
+  /* UZUPEŁNIĆ */
+  public void ustawPolecenie(IPolecenie polecenie){
+    this.polecenie = polecenie;
+  }
+ 
+  public void wcisnijGuzik(){
+    polecenie.wykonaj();
+  }
+ 
+}
+ 
+ 
+class Program{
+  static void Main(string[] args)    {
+    /* UZUPEŁNIĆ */
+    Console.OutputEncoding = Encoding.UTF8;
+    Lampa lampa = new Lampa();
+ 
+    IPolecenie wlacz = new KomendaWlacz(lampa);
+    /* UZUPEŁNIĆ */
+    Pilot pilot = new Pilot();    
+    Console.WriteLine(lampa.sprawdz() ? "Lampa włączona" : "Lampa wyłączona");
+ 
+    pilot.ustawPolecenie(wlacz);
+    pilot.wcisnijGuzik();
+    /* UZUPEŁNIĆ */
+    Console.WriteLine(lampa.sprawdz() ? "Lampa włączona" : "Lampa wyłączona");
+    IPolecenie wylacz = new KomendaWylacz(lampa);
+ 
+    pilot.ustawPolecenie(wylacz);
+    pilot.wcisnijGuzik();
+    /* UZUPEŁNIĆ */
+    Console.WriteLine(lampa.sprawdz() ? "Lampa włączona" : "Lampa wyłączona");
+ 
+    pilot.ustawPolecenie(wylacz);
+    pilot.wcisnijGuzik();
+    /* UZUPEŁNIĆ */
+    Console.WriteLine(lampa.sprawdz() ? "Lampa włączona" : "Lampa wyłączona");
+ 
+  }
+}
