@@ -1,0 +1,129 @@
+using System;
+
+public interface Lancuch
+{
+    void ustawNastepne(Lancuch c);
+    void przetwarzaj(Powiadomienia powiadomienia);
+}
+
+public class Powiadomienia
+{
+    private int number;
+
+    public Powiadomienia(int number)
+    {
+        this.number = number;
+    }
+
+    public int pobierzLiczbe()
+    {
+        return number;
+    }
+}
+
+public class BrakLancuch : Lancuch
+{
+    private Lancuch nastepneWLancuchu;
+
+    public void ustawNastepne(Lancuch c)
+    {
+        this.nastepneWLancuchu = c;
+    }
+
+    public void przetwarzaj(Powiadomienia powiadomienia)
+    {
+        if (powiadomienia.pobierzLiczbe() <= 0)
+        {
+            // to ja obsługuję!
+            Console.WriteLine("Brak powiadomień");
+        }
+        else
+        {
+            if (nastepneWLancuchu != null)
+                nastepneWLancuchu.przetwarzaj(powiadomienia);
+        }
+        return;
+    }
+}
+
+public class MaloLancuch : Lancuch
+{
+    private Lancuch nastepneWLancuchu;
+
+    public void ustawNastepne(Lancuch c)
+    {
+        this.nastepneWLancuchu = c;
+    }
+
+    public void przetwarzaj(Powiadomienia powiadomienia)
+    {
+        var ile = powiadomienia.pobierzLiczbe();
+        if ((ile > 0) && (ile < 10))
+        {
+            // to ja obsługuję!
+            Console.WriteLine("Mało powiadomień: {0}", ile);
+        }
+        else
+        {
+            if (nastepneWLancuchu != null)
+                nastepneWLancuchu.przetwarzaj(powiadomienia);
+        }
+        return;
+    }
+}
+
+public class DuzoLancuch : Lancuch
+{
+    private Lancuch nastepneWLancuchu;
+
+    public void ustawNastepne(Lancuch c)
+    {
+        this.nastepneWLancuchu = c;
+    }
+
+    public void przetwarzaj(Powiadomienia powiadomienia)
+    {
+        var ile = powiadomienia.pobierzLiczbe();
+        if ((ile > 10))
+        {
+            // to ja obsługuję!
+            Console.WriteLine("Dużo powiadomień: {0}", ile);
+        }
+        else
+        {
+            if (nastepneWLancuchu != null)
+                nastepneWLancuchu.przetwarzaj(powiadomienia);
+        }
+        return;
+    }
+}
+
+
+class Program
+{
+    static void Main(String[] args)
+    {
+
+        Lancuch l1 = new BrakLancuch();
+        Lancuch l2 = new MaloLancuch();
+        Lancuch l3 = new DuzoLancuch();
+
+        l1.ustawNastepne(l2);
+        l2.ustawNastepne(l3);
+
+        int i = 0;
+        l1.przetwarzaj(new Powiadomienia(i));
+
+        i++;
+        l1.przetwarzaj(new Powiadomienia(i));
+
+        i = 12;
+        l1.przetwarzaj(new Powiadomienia(i));
+
+        i = 3;
+        l1.przetwarzaj(new Powiadomienia(i));
+
+        i = 0;
+        l1.przetwarzaj(new Powiadomienia(i));
+    }
+}
