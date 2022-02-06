@@ -1,0 +1,200 @@
+using System;
+
+public class Computer
+{
+	private string _type;
+	public string MotherBoard
+
+	{
+		get;
+		set;
+	}
+
+	public string Screen
+	{
+		get;
+		set;
+	}
+	public string Drive
+	{
+		get;
+		set;
+	}
+	public string Processor
+	{
+		get;
+		set;
+	}
+
+	public double Price
+	{
+		get;
+		set;
+	}
+
+
+		public Computer(string computerType)
+		{
+			_type = computerType;
+			Price = 0;
+		}
+	
+		public void DisplayConfiguration()
+	{
+		Console.WriteLine("Typ: " + _type);
+		Console.WriteLine($"Ekran: {Screen}");
+		Console.WriteLine($"Procesor: {Processor}");
+		Console.WriteLine($"Motherboard: {MotherBoard}");
+		Console.WriteLine($"Dysk; {Drive}");
+		Console.WriteLine("Cena: " + Price);
+		Console.WriteLine();
+	}
+
+}
+
+
+public class ComputerShop
+{
+	public void ConstructComputer(ComputerBuilder computerBuilder)
+
+	{
+		computerBuilder.BuildScreen();
+		computerBuilder.BuildMotherboard();
+		computerBuilder.BuildProcessor();
+		computerBuilder.BuildDrive();
+	}
+
+}
+
+
+
+public abstract class ComputerBuilder
+{
+	public Computer Computer
+
+	{
+		get;
+		set;
+	}
+
+	public abstract void BuildScreen();
+	public abstract void BuildMotherboard();
+	public abstract void BuildProcessor();
+	public abstract void BuildDrive();
+}
+
+
+public class OfficeComputerBuilder : ComputerBuilder
+{
+	public OfficeComputerBuilder()
+
+	{
+		Computer = new Computer("biurowy");
+	}
+
+	public override void BuildScreen()
+	{
+		Computer.Screen = "BenQ GW2270H (1920x1080)";
+		Computer.Price += 369.00;
+	}
+
+	public override void BuildMotherboard()
+	{
+		Computer.MotherBoard = "A320M-E";
+		Computer.Price += 259.9;
+	}
+
+	public override void BuildProcessor()
+	{
+		Computer.Processor = "AMD Ryzen 5 2600";
+		Computer.Price += 589.00;
+	}
+	public override void BuildDrive()
+	{
+		Computer.Drive = "Goodram CX400 250 GB SATA3";
+		Computer.Price += 149.99;
+	}
+}
+
+
+public class GammingComputerBuilder : ComputerBuilder
+{
+	public GammingComputerBuilder()
+
+	{
+		Computer = new Computer("gamingowy");
+	}
+
+	public override void BuildScreen()
+	{
+		Computer.Screen = "HP Z4W65A4";
+		Computer.Price += 4927.75;
+	}
+
+	public override void BuildMotherboard()
+	{
+		Computer.MotherBoard = "Gigabyte X570 Aorus Elite";
+		Computer.Price += 895.6;
+	}
+
+	public override void BuildProcessor()
+	{
+		Computer.Processor = "Intel i7 9700K";
+		Computer.Price += 1829.00;
+	}
+	public override void BuildDrive()
+	{
+		Computer.Drive = "Samsung 970 EVO Plus 2TB M.2";
+		Computer.Price += 2028.45;
+	}
+}
+
+public class ProffesionalComputerBuilder : ComputerBuilder
+{
+	public ProffesionalComputerBuilder()
+
+	{
+		Computer = new Computer("profesjonalny");
+	}
+
+	public override void BuildScreen()
+	{
+		Computer.Screen = "Eizo CG319X";
+		Computer.Price += 20749.00;
+	}
+
+	public override void BuildMotherboard()
+	{
+		Computer.MotherBoard = "Supermicro MBD X11DPH";
+		Computer.Price += 2755.30;
+	}
+
+	public override void BuildProcessor()
+	{
+		Computer.Processor = "Intel Xeon Gold 5120";
+		Computer.Price += 7999.00;
+	}
+	public override void BuildDrive()
+	{
+		Computer.Drive = "Seagate Skyhawk 14TB 3.5";
+		Computer.Price += 2101.75;
+	}
+}
+
+public class Program
+{
+	static void Main(string[] args)
+
+	{
+		ComputerShop computerShop = new ComputerShop();
+		ComputerBuilder computerBuilder = new OfficeComputerBuilder();
+		computerShop.ConstructComputer(computerBuilder);
+		computerBuilder.Computer.DisplayConfiguration();
+		computerBuilder = new GammingComputerBuilder();
+		computerShop.ConstructComputer(computerBuilder);
+		computerBuilder.Computer.DisplayConfiguration();
+		computerBuilder = new ProffesionalComputerBuilder();
+		computerShop.ConstructComputer(computerBuilder);
+		computerBuilder.Computer.DisplayConfiguration();
+	}
+}
