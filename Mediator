@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+
+
+public interface IUzytkownik
+{
+    void WyslijWiadomosc(string wiadomosc);
+    void OdbierzWiadomosc(string wiadomosc);
+}
+
+public interface IMediator
+{
+    void WyslijWiadomosc(string wiadomosc, IUzytkownik nadawca);
+    void DodajUzytkownika(IUzytkownik uzytkownik);
+}
+
+public class Mediator : IMediator
+{
+    List<IUzytkownik> uzytkownicy;
+
+    public Mediator()
+    {
+        uzytkownicy = new List<IUzytkownik>();
+    }
+
+    public void DodajUzytkownika(IUzytkownik uzytkownik)
+    {
+        uzytkownicy.Add(uzytkownik);
+    }
+
+    public void WyslijWiadomosc(string wiadomosc, IUzytkownik nadawca)
+    {
+        foreach (var adresat in uzytkownicy)
+            if (adresat != nadawca)
+                adresat.OdbierzWiadomosc(wiadomosc);
+    }
+}
+
+//
+//
+//
+
+public class Dev : IUzytkownik
+{
+    string login;
+    IMediator mediator;
+
+    public Dev(IMediator mediator, string login)
+    {
+        this.login = login;
+        this.mediator = mediator;
+    }
+
+    public void WyslijWiadomosc(string wiadomosc)
+    {
+        mediator.WyslijWiadomosc(wiadomosc, this);
+    }
+
+    public void OdbierzWiadomosc(string wiadomosc)
+    {
+        Console.WriteLine("Programista " + login + " otrzymal wiadomosc: " + wiadomosc);
+    }
+}
+
+class Klient : IUzytkownik
+{
+    IMediator mediator;
+    string login;
+
+    public Klient(IMediator mediator, string login)
+    {
+        this.mediator = mediator;
+        this.login = login;
+    }
+
+    public void OdbierzWiadomosc(string wiadomosc)
+    {
+        Console.WriteLine("Klient " + login + " otrzymal wiadomosc: " + wiadomosc);
+    }
+
+    public void WyslijWiadomosc(string wiadomosc)
+    {
+        mediator.WyslijWiadomosc(wiadomosc, this);
+    }
+}
+
+//
+//
+
+class Program
+{
+    /*
+    Programista Nakamoto otrzymal wiadomosc: Prosze natychmiast wprowadzic poprawki na produkcje.
+    Programista Geohot otrzymal wiadomosc: Prosze natychmiast wprowadzic poprawki na produkcje.
+    Uzytkownik Ania otrzymal wiadomosc: Czekam az Nakamoto zaparzy kawe...
+    Programista Nakamoto otrzymal wiadomosc: Czekam az Nakamoto zaparzy kawe...
+    */
+
+    static void Main(string[] args)
+    {
+
+        IMediator mediator = new Mediator();
+
+        IUzytkownik ania = new Klient(mediator, "Ania");
+        IUzytkownik nakamoto = new Dev(mediator, "Nakamoto");
+        IUzytkownik geohot = new Dev(mediator, "Geohot");
+
+        mediator.DodajUzytkownika(ania);
+        mediator.DodajUzytkownika(nakamoto);
+        mediator.DodajUzytkownika(geohot);
+
+        ania.WyslijWiadomosc("Prosze natychmiast wprowadzic poprawki na produkcje.");
+
+        geohot.WyslijWiadomosc("Czekam az Nakamoto zaparzy kawe...");
+
+    }
+}
