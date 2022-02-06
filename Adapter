@@ -1,0 +1,126 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Xml;
+
+namespace WzorzecAdapter
+{
+    public class UsersApi
+    {
+        public async Task<string> GetUsersXmlAsync()
+        {
+            var apiResponse = "<?xml version= \"1.0\" encoding= \"UTF-8\"?><users><user name=\"John\" surname=\"Doe\"/><user name=\"John\" surname=\"Wayne\"/><user name=\"John\" surname=\"Rambo\"/></users>";
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(apiResponse);
+
+            return await Task.FromResult(doc.InnerXml);
+        }
+    }
+	public class CsvApi
+	{
+		public string GetUserCsv()
+		{
+			var CsvResponse = "Adam,Nowak\nKatarzyna,Kowalska\nWojciech,Jankowski";
+			return CsvResponse;
+		}
+	}
+  public class CsvApiFromFile
+  {
+    private string filename;
+    public CsvApiFromFile(string filename)
+    {
+      this.filename=filename;
+    }
+    public string GetUserCsv()
+    {
+      return System.IO.File.ReadAllText(filename);
+    }
+  }
+    public interface IUserRepository
+    {
+        List<string> GetUserNames();
+    }
+
+    public class UsersRepositoryAdapter : IUserRepository
+    {
+        private UsersApi _adaptee = null;
+
+        public UsersRepositoryAdapter(UsersApi adaptee)
+        {
+            _adaptee = adaptee;
+        }
+
+        public List<string> GetUserNames()
+        {
+			string incompatibleApiResponse = this._adaptee
+              .GetUsersXmlAsync()
+              .GetAwaiter()
+              .GetResult();
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(incompatibleApiResponse);
+            var rootEl = doc.LastChild;
+            List<string> userNames = new List<string>();
+
+            if (rootEl.HasChildNodes)
+            {
+                foreach (XmlNode user in rootEl.ChildNodes)
+                {
+                    userNames.Add(user.Attributes["name"].InnerText + user.Attributes["surname"].InnerText);
+                }
+            }
+            return userNames;
+        }
+
+    }
+	public class CsvAdapter  : IUserRepository
+	{
+		private CsvApiFromFile _adaptee = null;
+		public CsvAdapter(CsvApiFromFile adaptee)
+		{
+			_adaptee = adaptee;
+		}
+		public List<string> GetUserNames()
+		{
+			string incompatibleApiResponse = this._adaptee.GetUserCsv();
+			List<string> userNames = new List<string>();
+			String[] strlist = incompatibleApiResponse.Split('\n');
+			foreach(String s in strlist)
+			{
+				userNames.Add(s.Replace(',' , ' '));
+			}
+			return userNames;
+		}
+	}
+	public class Program
+    {
+
+        static void Main(string[] args)
+        {
+			/*
+            UsersApi userRepository = new UsersApi();
+            IUserRepository adapter = new UsersRepositoryAdapter(userRepository);
+            List<string> users = adapter.GetUserNames();
+            foreach(var userName in users)
+            {
+              Console.WriteLine(userName);
+            }
+			*/
+			
+   			CsvApiFromFile csvRepository = new CsvApiFromFile("users.csv");
+
+            IUserRepository csvAdapter = new CsvAdapter(csvRepository);
+
+            List<string> newUsers = csvAdapter.GetUserNames();
+            int numer = 1;
+            foreach(var userName in newUsers)
+            {
+              Console.WriteLine($"{numer}. {userName}");
+              numer++;
+            }
+
+        }
+
+    }
+}
